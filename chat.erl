@@ -27,7 +27,7 @@ chatProcess(MyUsername,Chat_Node) ->
 		{_,bye} ->
 			io:format("Your partner disconnected~n");
 		{Username,Message} ->
-			io:format("~s: ~s", Username, Message)
+			io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)])
 	end,
 	chatProcess(MyUsername,Chat_Node).
 
@@ -46,7 +46,7 @@ chatProcess(MyUsername) ->
 				{_,bye} ->
 					io:format("Your partner disconnected~n");
 				{Username,Message} ->
-					io:format("~s: ~s", Username, Message)
+					io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)])
 			end,
 			chatProcess(MyUsername,Chat_Node)
 	end.
