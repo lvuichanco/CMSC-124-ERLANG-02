@@ -24,12 +24,12 @@ chatProcess(MyUsername,Chat_Node) ->
 
 	% Receive message from partner
 	receive
-		{_,bye} ->
+		{_,"bye~n"} ->
 			io:format("Your partner disconnected~n");
 		{Username,Message} ->
 			io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)])
-	end,
-	chatProcess(MyUsername,Chat_Node).
+			chatProcess(MyUsername,Chat_Node)
+	end.
 
 % First chat process made by init_chat
 % After first exchange, switch to other chat process
@@ -43,11 +43,11 @@ chatProcess(MyUsername) ->
 
 			% Receive message from partner
 			receive
-				{_,bye} ->
+				{_,"bye~n"} ->
 					io:format("Your partner disconnected~n");
 				{Username,Message} ->
-					io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)])
-			end,
-			chatProcess(MyUsername,Chat_Node)
+					io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)]),
+					chatProcess(MyUsername,Chat_Node)
+			end
 	end.
 
