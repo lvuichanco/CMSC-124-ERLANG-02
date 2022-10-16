@@ -15,7 +15,7 @@ init_chat() ->
 init_chat2(Chat_Node) ->
 	MyUsername = io:get_line("Enter Your Name: "),
 	spawn(chat,chatProcess,[MyUsername,Chat_Node]),
-	{init_chat,Chat_Node} ! self().
+	{init_chat,Chat_Node} ! node().
 
 % Accept input for message to send
 % While waiting for input, print any messages received
