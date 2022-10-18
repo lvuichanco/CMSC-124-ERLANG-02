@@ -22,8 +22,17 @@ chatProcess(MyUsername,Chat_Node) ->
 
 	% Send message to partner
 	Send = io:get_line("You: "),
-	{receiveAsync,Chat_Node} ! {MyUsername,Send},
-	chatProcess(MyUsername,Chat_Node).
+	TrimmedMessage = string:trim(Send),
+
+	if
+		TrimmedMessage == "bye" ->
+			io:format("Input Bye!~n");
+		TrimmedMessage =/= "bye" ->
+			{receiveAsync,Chat_Node} ! {MyUsername,Send},
+			chatProcess(MyUsername,Chat_Node)
+	end.
+
+
 
 
 % First chat process made by init_chat
@@ -41,9 +50,14 @@ chatProcess(MyUsername) ->
 % Asynchronous function to receive messages
 receiveAsync() ->
 	receive
-		{_,"bye~n"} ->
-			io:format("Your partner disconnected~n");
 		{Username,Message} ->
-			io:format("~s: ~s~n", [string:trim(Username), string:trim(Message)]),
-			receiveAsync()
+			TrimmedMessage = string:trim(Message),
+			if
+				TrimmedMessage == "bye" ->
+					io:format("Your partner disconnected~n");
+					
+				TrimmedMessage =/= "bye" ->
+					io:format("~s: ~s~n", [string:trim(Username), TrimmedMessage]),
+					receiveAsync()
+			end
 	end.
