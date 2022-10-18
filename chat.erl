@@ -44,6 +44,6 @@ receiveAsync() ->
 		{_,"bye~n"} ->
 			io:format("Your partner disconnected~n");
 		{Username,Message} ->
-			io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)]),
+			io:format("~s: ~s~n", [string:trim(Username), string:trim(Message)]),
 			receiveAsync()
 	end.
