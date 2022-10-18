@@ -27,6 +27,7 @@ chatProcess(MyUsername,Chat_Node) ->
 	if
 		TrimmedMessage == "bye" ->
 			io:format("Input Bye!~n");
+			{receiveAsync,Chat_Node} ! {MyUsername,Send},
 		TrimmedMessage =/= "bye" ->
 			{receiveAsync,Chat_Node} ! {MyUsername,Send},
 			chatProcess(MyUsername,Chat_Node)
