@@ -5,6 +5,7 @@
 % When incoming connection is found, run chat function
 init_chat() ->
 	MyUsername = io:get_line("Enter Your Name: "),
+	register(receiveAsync,spawn(chat,receiveAsync,[])),
 	register(chatProcess,spawn(chat,chatProcess,[MyUsername])).
 
 % Set username and connect to existing host
@@ -12,6 +13,7 @@ init_chat() ->
 init_chat2(Chat_Node) ->
 	MyUsername = io:get_line("Enter Your Name: "),
 	{chatProcess,Chat_Node} ! node(),
+	register(receiveAsync,spawn(chat,receiveAsync,[])),
 	chatProcess(MyUsername,Chat_Node).
 
 % Accept input for message to send
@@ -20,16 +22,9 @@ chatProcess(MyUsername,Chat_Node) ->
 
 	% Send message to partner
 	Send = io:get_line("You: "),
-	{chatProcess,Chat_Node} ! {MyUsername,Send},
+	{receiveAsync,Chat_Node} ! {MyUsername,Send},
+	chatProcess(MyUsername,Chat_Node).
 
-	% Receive message from partner
-	receive
-		{_,"bye~n"} ->
-			io:format("Your partner disconnected~n");
-		{Username,Message} ->
-			io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)])
-			chatProcess(MyUsername,Chat_Node)
-	end.
 
 % First chat process made by init_chat
 % After first exchange, switch to other chat process
@@ -39,15 +34,16 @@ chatProcess(MyUsername) ->
 		Chat_Node ->
 			% Send message to partner
 			Send = io:get_line("You: "),
-			{chatProcess,Chat_Node} ! {MyUsername,Send},
-
-			% Receive message from partner
-			receive
-				{_,"bye~n"} ->
-					io:format("Your partner disconnected~n");
-				{Username,Message} ->
-					io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)]),
-					chatProcess(MyUsername,Chat_Node)
-			end
+			{receiveAsync,Chat_Node} ! {MyUsername,Send},
+			chatProcess(MyUsername,Chat_Node)
 	end.
 
+% Asynchronous function to receive messages
+receiveAsync() ->
+	receive
+		{_,"bye~n"} ->
+			io:format("Your partner disconnected~n");
+		{Username,Message} ->
+			io:format("~p: ~p~n", [string:trim(Username), string:trim(Message)]),
+			receiveAsync()
+	end.
